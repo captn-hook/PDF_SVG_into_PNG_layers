@@ -8,16 +8,14 @@ svg=$1.svg
 
 #get layer ids
 layer_ids=$(flatpak run org.inkscape.Inkscape --query-all $svg | cut -d ',' -f 1)
-#remove all ids that start with 'path', 'use', and 'g'
-layer_ids=$(echo $layer_ids | sed 's/path[0-9]*//g')
-layer_ids=$(echo $layer_ids | sed 's/use[0-9]*//g')
-layer_ids=$(echo $layer_ids | sed 's/g[0-9]*//g')
+#remove all ids that have path, use, or g as the first characters after a space
+layer_ids=$(echo $layer_ids | sed 's/[^ ]*path[^ ]*//g' | sed 's/[^ ]*use[^ ]*//g' | sed 's/[^ ]*g[^ ]*//g')
 
 echo $layer_ids
 #convert the svg layers to individual pngs using --export-id-only
 for id in $layer_ids
 do
-    flatpak run org.inkscape.Inkscape --export-type=png --export-id-only --export-id=$id --export-filename=$id.png $svg
+    flatpak run org.inkscape.Inkscape --export-area-drawing --export-type=svg --export-id-only --export-id=$id --export-filename=$id.svg $svg
 done
 
 #convert the svg layers to individual pngs
