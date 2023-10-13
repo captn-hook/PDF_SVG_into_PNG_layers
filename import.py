@@ -9,12 +9,17 @@ bpy.context.preferences.edit.undo_steps = 0
 # to false
 bpy.context.preferences.edit.use_global_undo = False
 
-def select_collection_objects(collection):
-    for obj in collection.all_objects:
-        obj.select_set(True)
-    #set active object to last selected
-    bpy.context.view_layer.objects.active = obj
-
+def rec_join_col(collection):
+    #joins all objects in collection into one object, but only n at a time to avoid memory overload
+    n = 400
+    objs = collection.objects
+    for i in range(0, len(objs), n):
+        for obj in objs[i:i+n]:
+            obj.select_set(True)
+        #set active object to last selected
+        bpy.context.view_layer.objects.active = objs[i]
+        #join all selected, should remain selected on next iter
+        
 files = os.listdir(path)
 #sort files by name and number
 files.sort(key=lambda f: int(''.join(filter(str.isdigit, f))))
@@ -33,14 +38,12 @@ for f in files:
         for obj in col.objects:
             mat = obj.active_material
             if mat:
-                mat.user_clear()
+                #mat.user_clear()
                 bpy.data.materials.remove(mat)
 
-        select_collection_objects(col)
-
-        bpy.ops.object.join()
+        rec_join_col(col)
         
         #redraw
-        bpy.ops.wm.redraw_timer(type='DRAW_WIN_SWAP', iterations=1)        
+        #bpy.ops.wm.redraw_timer(type='DRAW_WIN_SWAP', iterations=1)        
         #save the file to avoid memory overload
         bpy.ops.wm.save_as_mainfile(filepath=bpy.data.filepath)

@@ -1,4 +1,4 @@
-#a program to convert pdf's with embedded svg's to individual pngs's for each layer
+#a program to convert pdf's with embedded svg's to individual svg's for each layer
 # alias inkscape="flatpak run --command=bash org.inkscape.Inkscape" 
 
 #convert the pdf to svg
@@ -15,7 +15,7 @@ echo $layer_ids
 #convert the svg layers to individual pngs using --export-id-only
 for id in $layer_ids
 do
-    flatpak run org.inkscape.Inkscape --export-area-drawing --export-type=svg --export-id-only --export-id=$id --export-filename=$id.svg $svg
+    flatpak run org.inkscape.Inkscape --export-area-drawing --export-type=svg --export-id-only --export-id=$id --export-filename=./svg/$id.svg $svg
 done
 
 #convert the svg layers to individual pngs
