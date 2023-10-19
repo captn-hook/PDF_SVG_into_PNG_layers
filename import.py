@@ -1,6 +1,6 @@
 #bpy script to import a folder of svg's
 
-path = "./svg/"
+path = "./Files/Layerd/Sunstone/"
 
 import bpy
 import os
@@ -11,14 +11,15 @@ bpy.context.preferences.edit.use_global_undo = False
 
 def rec_join_col(collection):
     #joins all objects in collection into one object, but only n at a time to avoid memory overload
-    n = 400
     objs = collection.objects
-    for i in range(0, len(objs), n):
-        for obj in objs[i:i+n]:
-            obj.select_set(True)
+    for o in objs:
+        o.select_set(True)
         #set active object to last selected
-        bpy.context.view_layer.objects.active = objs[i]
-        #join all selected, should remain selected on next iter
+        bpy.context.view_layer.objects.active = o
+        if len(bpy.context.selected_objects) > 300:
+            bpy.ops.object.join()
+            
+
         
 files = os.listdir(path)
 #sort files by name and number
